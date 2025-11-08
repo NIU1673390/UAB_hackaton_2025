@@ -18,7 +18,7 @@ START_ZOOM = 12
 @app.get("/")
 def index(request: Request):
 
-    return templates.TemplateResponse("index2.html", {
+    return templates.TemplateResponse("index.html", {
         "request": request,
         "start_lat": START_LAT,
         "start_lon": START_LON,

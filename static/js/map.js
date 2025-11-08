@@ -38,11 +38,15 @@ const buildingsCheckbox = document.getElementById('buildings-3d-checkbox');
 const metroLinesCheckbox = document.getElementById('metro-lines-checkbox');
 const metroStopsCheckbox = document.getElementById('metro-stops-checkbox');
 const populationPointsCheckbox = document.getElementById('population-points-checkbox');
+const populationHeatmapCheckbox = document.getElementById('population-heatmap-checkbox');
 
 // ==========================================================
-// NUEVAS LÍNEAS: Referencias para el Mapa de Calor y sus sliders
+// LÍNEA RESTAURADA: Referencia para la Demanda de Estaciones
 // ==========================================================
-const populationHeatmapCheckbox = document.getElementById('population-heatmap-checkbox');
+const stationDemandCheckbox = document.getElementById('station-demand-checkbox');
+
+
+// Referencias a los sliders del mapa de calor
 const heatmapSliderContainer = document.getElementById('heatmap-slider-container');
 const heatmapRadiusSlider = document.getElementById('heatmap-radius-slider');
 const heatmapIntensitySlider = document.getElementById('heatmap-intensity-slider');
@@ -131,14 +135,14 @@ function initializeMap() {
             'layout': { 'visibility': 'none', 'line-join': 'round', 'line-cap': 'round' },
             'paint': {
                 'line-color': ['concat', '#', ['get', 'COLOR_LINIA']],
-                'line-width': 3
+                'line-width': 5
             }
         });
         
-        // --- Capa Paradas de Metro (GeoJSON) ---
+        // --- Capa Paradas de Metro (Puntos Rojos Simples) ---
         map.addSource('metro-stops', {
             'type': 'geojson',
-            'data': 'static/data/barcelona_metro_stops.geojson'
+            'data': 'static/data/estacions.geojson'
         });
         map.addLayer({
             'id': 'metro-stops-layer',
@@ -153,28 +157,22 @@ function initializeMap() {
             }
         });
         
-        // --- Capa de Puntos de Población (GeoJSON) ---
-        // (Usamos la misma fuente para el heatmap y los puntos)
+        // --- Fuente de Datos de Población (Puntos) ---
         map.addSource('population-points', {
             'type': 'geojson',
             'data': 'static/data/barcelona_population_points.geojson'
         });
         
+        // --- Capa Puntos de Población (Graduados) ---
         map.addLayer({
             'id': 'population-points-layer',
             'type': 'circle',
             'source': 'population-points',
             'layout': { 'visibility': 'none' },
             'paint': {
-                // ==========================================================
-                // CAMBIO: Tus nuevos valores de radio (más pequeños)
-                // ==========================================================
                 'circle-radius': [
                     'interpolate', ['linear'], ['get', 'poblacion_estimada'],
-                    0, 1,   // Si 0 persones -> 1px radi
-                    10, 1.5,  // Si 10 persones -> 1.5px radi
-                    50, 3,  // Si 50 persones -> 3px radi
-                    100, 5 // Si 100+ persones -> 5px radi
+                    0, 1, 10, 1.5, 50, 3, 100, 5
                 ],
                 'circle-color': [
                     'interpolate', ['linear'], ['get', 'poblacion_estimada'],
@@ -186,49 +184,78 @@ function initializeMap() {
             }
         });
         
-        // ==========================================================
-        // NUEVO BLOQUE: Capa de Mapa de Calor de Población
-        // ==========================================================
+        // --- Capa Mapa de Calor de Población (Heatmap) ---
         map.addLayer({
             'id': 'population-heatmap-layer',
             'type': 'heatmap',
-            'source': 'population-points', // Reutilizamos la misma fuente
-            'layout': {
-                'visibility': 'none' // Oculta por defecto
-            },
+            'source': 'population-points', 
+            'layout': { 'visibility': 'none' },
             'paint': {
-                // Pondera cada punto según la población estimada
-                // (0 población = 0 peso, 100+ población = peso 1)
                 'heatmap-weight': [
                     'interpolate', ['linear'], ['get', 'poblacion_estimada'],
-                    0, 0,
-                    100, 1 
+                    0, 0, 100, 1 
                 ],
-                // Intensidad controlada por el slider (default 1)
-                'heatmap-intensity': 0.4, // Abans era 1
-                'heatmap-radius': 15,     // Abans era 30
-                // Rampa de color (azul -> verde -> amarillo -> rojo)
+                // Valores iniciales ajustados a tus sliders
+                'heatmap-intensity': 0.4, 
+                'heatmap-radius': 15,
                 'heatmap-color': [
-                    'interpolate',
-                    ['linear'],
-                    ['heatmap-density'],
-                    0, 'rgba(33,102,172,0)',
-                    0.2, 'rgb(103,169,207)',
-                    0.4, 'rgb(209,229,240)',
-                    0.6, 'rgb(253,219,199)',
-                    0.8, 'rgb(239,138,98)',
-                    1, 'rgb(178,24,43)'
+                    'interpolate', ['linear'], ['heatmap-density'],
+                    0, 'rgba(33,102,172,0)', 0.2, 'rgb(103,169,207)', 0.4, 'rgb(209,229,240)',
+                    0.6, 'rgb(253,219,199)', 0.8, 'rgb(239,138,98)', 1, 'rgb(178,24,43)'
                 ],
-                // Opacidad general de la capa
                 'heatmap-opacity': 0.8
             }
         });
 
-        // --- Ordenar Capas ---
-        const layersToMove = ['catastro-layer', 'metro-stops-layer', 'population-points-layer', 'population-heatmap-layer', 'metro-lines-layer'];
+        // ==========================================================
+        // BLOC RESTAURAT: Capa de Demanda d'Estacions (Persones)
+        // ==========================================================
+        map.addSource('station-demand-source', {
+            'type': 'geojson',
+            'data': 'static/data/estacions.geojson' // El teu arxiu amb la dada 'PERSONA'
+        });
+        map.addLayer({
+            'id': 'station-demand-layer',
+            'type': 'circle',
+            'source': 'station-demand-source',
+            'layout': {
+                'visibility': 'none' // Amagada per defecte
+            },
+            'paint': {
+                // Radi graduat basat en la propietat 'PERSONA'
+                'circle-radius': [
+                    'interpolate', ['linear'], ['get', 'PERSONA'],
+                    1000000, 3,  // 1 milió de persones -> 3px radi
+                    3000000, 6,  // 3 milions -> 6px
+                    5000000, 10, // 5 milions -> 10px
+                    8000000, 15  // 8+ milions -> 15px
+                ],
+                // Color graduat (groc a vermell) basat en 'PERSONA'
+                'circle-color': [
+                    'interpolate', ['linear'], ['get', 'PERSONA'],
+                    1000000, '#ffffcc', // Groc
+                    3000000, '#fd8d3c', // Taronja
+                    5000000, '#e31a1c', // Vermell
+                    8000000, '#800026'  // Vermell fosc
+                ],
+                'circle-opacity': 0.8,
+                'circle-stroke-color': 'white',
+                'circle-stroke-width': 1
+            }
+        });
+
+
+        // --- Ordenar Capes ---
+        const layersToMove = [
+            'catastro-layer',  
+            'population-points-layer', 
+            'population-heatmap-layer',
+            'metro-lines-layer', 
+            'metro-stops-layer',
+            'station-demand-layer' // Afegim la capa de demanda a la llista
+        ];
         layersToMove.forEach(layerId => {
             if (map.getLayer(layerId)) {
-                // Mueve todas las capas debajo de los edificios 3D
                 map.moveLayer(layerId, 'buildings-3d-layer');
             }
         });
@@ -236,7 +263,7 @@ function initializeMap() {
 }
 
 /**
- * Cambia la visibilidad de los mapas base.
+ * Canvia la visibilitat dels mapes base.
  */
 function setBaseMap(selectedMapId) {
     if (!map) return;
@@ -248,10 +275,10 @@ function setBaseMap(selectedMapId) {
 }
 
 // ==================================================================
-// SECCIÓN 3: EVENT LISTENERS (Controles del mapa)
+// SECCIÓ 3: EVENT LISTENERS (Controls del mapa)
 // ==================================================================
 
-// --- Control del Panel de Capas ---
+// --- Control del Panell de Capes ---
 layersToggleBtn.addEventListener('click', (e) => { 
     e.stopPropagation(); 
     const isVisible = layersPanel.style.display === 'block'; 
@@ -266,83 +293,70 @@ layersPanel.addEventListener('click', (e) => {
     e.stopPropagation(); 
 });
 
-// Listener para Mapas Base
+// Listener per a Mapes Base
 document.querySelectorAll('input[name="base-layer"]').forEach(radio => { 
     radio.addEventListener('change', (e) => { 
         if (e.target.checked) setBaseMap(e.target.value); 
     }); 
 });
 
-// Listener para Catastro
+// Listener per a Catastro
 catastroCheckbox.addEventListener('change', (e) => { 
     map.setLayoutProperty('catastro-layer', 'visibility', e.target.checked ? 'visible' : 'none'); 
 });
 
-// Listener para Edificios 3D
+// Listener per a Edificis 3D
 buildingsCheckbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('buildings-3d-layer')) return; 
     map.setLayoutProperty('buildings-3d-layer', 'visibility', e.target.checked ? 'visible' : 'none');
 });
 
-// Listener para Líneas de Metro
+// Listener per a Línies de Metro
 metroLinesCheckbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('metro-lines-layer')) return; 
     map.setLayoutProperty('metro-lines-layer', 'visibility', e.target.checked ? 'visible' : 'none');
 });
 
-// Listener para las Paradas de Metro
+// Listener per a les Parades de Metro
 metroStopsCheckbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('metro-stops-layer')) return; 
     map.setLayoutProperty('metro-stops-layer', 'visibility', e.target.checked ? 'visible' : 'none');
 });
 
-// Listener para los Puntos de Población
+// Listener per als Punts de Població
 populationPointsCheckbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('population-points-layer')) return; 
     map.setLayoutProperty('population-points-layer', 'visibility', e.target.checked ? 'visible' : 'none');
 });
 
-// ==========================================================
-// NUEVOS LISTENERS: Para el Mapa de Calor y sus Sliders
-// ==========================================================
-
-// 1. Listener para el CHECKBOX del mapa de calor
+// --- Listeners per al Mapa de Calor de Població ---
 populationHeatmapCheckbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('population-heatmap-layer')) return; 
-    
     const isVisible = e.target.checked;
-    
-    // Muestra/oculta la capa en el mapa
     map.setLayoutProperty('population-heatmap-layer', 'visibility', isVisible ? 'visible' : 'none');
-    
-    // Muestra/oculta el contenedor de los sliders
     heatmapSliderContainer.style.display = isVisible ? 'flex' : 'none';
 });
 
-// 2. Listener para el SLIDER de RADIO
 heatmapRadiusSlider.addEventListener('input', (e) => {
     if (!map || !map.getLayer('population-heatmap-layer')) return;
-    
-    // Obtenemos el valor (número) del slider
-    const radius = parseFloat(e.target.value);
-    
-    // Actualizamos la propiedad 'heatmap-radius' en el mapa
-    map.setPaintProperty('population-heatmap-layer', 'heatmap-radius', radius);
+    map.setPaintProperty('population-heatmap-layer', 'heatmap-radius', parseFloat(e.target.value));
 });
 
-// 3. Listener para el SLIDER de INTENSIDAD
 heatmapIntensitySlider.addEventListener('input', (e) => {
     if (!map || !map.getLayer('population-heatmap-layer')) return;
-    
-    // Obtenemos el valor (número) del slider
-    const intensity = parseFloat(e.target.value);
-    
-    // Actualizamos la propiedad 'heatmap-intensity' en el mapa
-    map.setPaintProperty('population-heatmap-layer', 'heatmap-intensity', intensity);
+    map.setPaintProperty('population-heatmap-layer', 'heatmap-intensity', parseFloat(e.target.value));
+});
+
+// ==========================================================
+// BLOC RESTAURAT: Listener per a la Demanda d'Estacions
+// ==========================================================
+stationDemandCheckbox.addEventListener('change', (e) => {
+    if (!map || !map.getLayer('station-demand-layer')) return; 
+    map.setLayoutProperty('station-demand-layer', 'visibility', e.target.checked ? 'visible' : 'none');
 });
 
 
-// --- Controles Adicionales del Mapa ---
+// --- Controls Addicionals del Mapa ---
 toggle3DBtn.addEventListener('click', () => { 
     const currentPitch = map.getPitch(); 
     map.easeTo({ 
@@ -365,6 +379,6 @@ cameraBtn.addEventListener('click', () => {
 });
 
 // ==================================================================
-// SECCIÓN 4: INICIALIZACIÓN
+// SECCIÓ 4: INICIALITZACIÓ
 // ==================================================================
 initializeMap();

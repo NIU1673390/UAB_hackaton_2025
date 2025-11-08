@@ -1,0 +1,131 @@
+/* * -------------------------------------
+ * ESTILOS BÁSICOS Y DEL MAPA
+ * -------------------------------------
+ */
+
+body, html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* Evita barras de scroll en el navegador */
+    overflow: hidden; 
+}
+
+/* * LA SOLUCIÓN:
+ * Esto fuerza al div del mapa a ocupar toda la pantalla.
+ */
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* 100vh = 100% de la altura de la ventana */
+    height: 100vh; 
+    /* El mapa debe estar en el fondo */
+    z-index: 0; 
+}
+
+/* * -------------------------------------
+ * ESTILOS PARA TUS WIDGETS
+ * -------------------------------------
+ */
+
+/* * Aseguramos que los widgets (paneles, botones) 
+ * se vean por encima del mapa.
+ */
+
+/* Contenedor de botones (3D, Cámara, Capas) */
+.map-buttons {
+    position: absolute;
+    /* Los colocamos arriba a la derecha */
+    top: 15px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Deben estar por encima del mapa (z-index: 0) */
+    z-index: 10; 
+}
+
+.map-buttons button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    color: #333;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.2s;
+}
+
+.map-buttons button:hover {
+    background-color: #f4f4f4;
+}
+
+/* Panel de Capas que se despliega */
+#layers-panel {
+    position: absolute;
+    /* Lo ponemos relativo a los botones de arriba */
+    top: 15px; 
+    right: 65px; /* Al lado de los botones */
+    width: 250px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+    padding: 15px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+#layers-panel h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+#layers-panel hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
+}
+
+.layer-option {
+    display: block;
+    margin-bottom: 8px;
+    cursor: pointer;
+    user-select: none; /* Evita seleccionar el texto */
+}
+
+.layer-option input {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* * -------------------------------------
+ * ESTILOS PARA WIDGETS DE MAPLIBRE
+ * -------------------------------------
+ */
+
+/* * Ajustamos los controles nativos de MapLibre 
+ * (zoom, escala) para que también tengan
+ * un z-index y se vean bien.
+ */
+.maplibregl-ctrl-group {
+    background: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+}
+
+.maplibregl-ctrl-group button {
+    border-radius: 8px !important;
+}
+
+.maplibregl-ctrl-top-left {
+    z-index: 5;
+}
+.maplibregl-ctrl-bottom-left {
+    z-index: 5;
+}

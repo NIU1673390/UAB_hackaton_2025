@@ -259,6 +259,49 @@ function initializeMap() {
                 map.moveLayer(layerId, 'buildings-3d-layer');
             }
         });
+
+        // ==========================================================
+        // NOU BLOC: Interacció del Mapa (Popups i Cursos)
+        // ==========================================================
+        
+        // --- Popups per a la Demanda d'Estacions ---
+        map.on('click', 'station-demand-layer', (e) => {
+            if (e.features.length > 0) {
+                const feature = e.features[0];
+                const coordinates = feature.geometry.coordinates.slice();
+                const stationName = feature.properties.NOM_ESTACIO;
+                const passengerCount = feature.properties.PERSONA;
+                
+                // Assegurem que el popup aparegui correctament
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                // Formatem el número de persones (p.ex., 7.718.459)
+                const formattedCount = Math.round(passengerCount).toLocaleString('ca-ES');
+                
+                const htmlContent = `
+                    <div style="font-family: Arial, sans-serif; font-size: 14px; max-width: 200px;">
+                        <strong style="color: #333; font-size: 1.1em;">${stationName}</strong>
+                        <hr style="border: 0; border-top: 1px solid #ccc; margin: 4px 0;">
+                        Passatgers: <strong style="color: #c00;">${formattedCount}</strong>
+                    </div>
+                `;
+
+                new maplibregl.Popup({ closeButton: false, offset: 15 }) // offset de 15px
+                    .setLngLat(coordinates)
+                    .setHTML(htmlContent)
+                    .addTo(map);
+            }
+        });
+
+        // --- Canvi de Cursor (per a la capa de demanda) ---
+        map.on('mouseenter', 'station-demand-layer', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'station-demand-layer', () => {
+            map.getCanvas().style.cursor = '';
+        });
     });
 }
 

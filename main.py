@@ -25,7 +25,7 @@ if not PUBLICAI_API_KEY:
     print("ALERTA: No s'ha trobat PUBLICAI_API_KEY al .env. L'endpoint /chat no funcionarà.")
 
 PUBLICAI_BASE_URL = "https://api.publicai.co/v1/chat/completions"
-PUBLICAI_MODEL = "BSC-LT/salamandra-7b-instruct-tools-16k"
+PUBLICAI_MODEL = "BSC-LT/ALIA-40b-instruct_Q8_0"
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -198,62 +198,65 @@ def dashboard_view(request: Request):
 # =========================
 # 🔹 PART NOVA: CHATBOT
 # =========================
-SYSTEM_PROMPT = '''Hola! Sóc l’assistent SmartMetro 🐾🚇<br>
-                Et puc explicar les línies, els intercanviadors, les estacions més transitades i com interpretar el dashboard.'''
-            
+
 class ChatRequest(BaseModel):
     message: str
-    history: list[dict] | None = None  # [{ "role": "user"/"assistant", "content": "..." }, ...]
+    history: list[dict] | None = None  # [{ "role": "user"/"assistant", "content": "..." }]
 
 
-def ask_salamandra(messages, max_tokens: int = 512, temperature: float = 0.4) -> str:
+def ask_salamandra(messages, max_tokens: int = 512, temperature: float = 0.7) -> str:
     """
-    Fa una crida al model Salamandra via PublicAI.
+    Envia els missatges directament al model Salamandra via PublicAI.
+    'messages' ha de ser una llista amb rols: system / user / assistant.
     """
     if not PUBLICAI_API_KEY:
-        # No trenquem tot el servei, només el xat
         return "Error de configuració: falta la PUBLICAI_API_KEY al servidor."
 
     headers = {
         "Authorization": f"Bearer {PUBLICAI_API_KEY}",
         "Content-Type": "application/json",
-        "User-Agent": "UAB-THE-HACK/1.0"
+        "User-Agent": "UAB-THE-HACK/1.0",
     }
-
-    conversa = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": messages}
-    ]
 
     payload = {
         "model": PUBLICAI_MODEL,
-        "messages": conversa,
+        "messages": messages,
         "max_tokens": max_tokens,
         "temperature": temperature,
     }
 
     try:
-        response = requests.post(PUBLICAI_BASE_URL, headers=headers, json=payload, timeout=30)
-        
-        if response.status_code == 200:
-            return response.json()["choices"][0]["message"]["content"]
-        elif response.status_code == 401:
-            return "❌ Error: API key invàlida. Verifica la teva configuració."
-        elif response.status_code == 429:
-            return "⚠️ Massa peticions. Espera uns segons i torna a intentar-ho."
-        else:
-            return f"❌ Error {response.status_code}: {response.text[:100]}"
+        resp = requests.post(PUBLICAI_BASE_URL, headers=headers, json=payload, timeout=30)
 
+        if resp.status_code == 200:
+            data = resp.json()
+            return data["choices"][0]["message"]["content"]
+
+        # Debug útil al terminal
+        print("PublicAI ERROR:", resp.status_code, resp.text)
+
+        if resp.status_code == 401:
+            return "❌ Error: API key invàlida o no autoritzada."
+        if resp.status_code == 429:
+            return "⚠️ Límit d'ús assolit per aquesta API key. Redueix peticions o fes servir una clau diferent."
+        return f"❌ Error {resp.status_code}: {resp.text[:200]}"
+
+    except requests.exceptions.Timeout:
+        return "⏱️ Timeout: el model triga massa a respondre."
     except Exception as e:
         print("Error amb PublicAI:", e)
-        return "Hi ha hagut un error en comunicar amb el model. Revisa la configuració del servidor."
+        return "Hi ha hagut un error en comunicar amb el model."
 
 @app.post("/chat")
 def chat_endpoint(req: ChatRequest):
     """
     Endpoint REST perquè el front demani respostes del chatbot.
-    El model rep també el CSV de les dades SmartMetro com a context.
+    Construeix un 'messages' vàlid per PublicAI:
+    - Primer 'system' amb el CSV
+    - Historial alternant rols (user/assistant), fusionant consecutius
+    - Finalment el missatge actual com a 'user' (fusionat si cal)
     """
+
     system_prompt = (
         "Ets l'assistent SmartMetro. "
         "Respon SEMPRE en català. "
@@ -261,23 +264,39 @@ def chat_endpoint(req: ChatRequest):
         "nombre de persones usuàries, línies i coordenades. "
         "Fes servir EXPLÍCITAMENT aquestes dades per respondre preguntes sobre: estacions més transitades, "
         "intercanviadors, volum per línia, etc. "
-        "Si alguna cosa no surt a les dades, digues-ho clarament. "
-        "Aquí tens el dataset complet (o una mostra representativa si és massa llarg):\n\n"
-        f"{CSV_FOR_BOT}\n\n"
-        "Quan responguis, explica els resultats de forma entenedora i, si cal, esmenta noms d'estacions, línies "
-        "i valors aproximats basats en aquest CSV."
+        "Si alguna cosa no surt a les dades, digues-ho clarament.\n\n"
+        f"{CSV_FOR_BOT}\n"
     )
 
-    messages = [{"role": "system", "content": system_prompt}]
+    messages = [
+        {"role": "system", "content": system_prompt}
+    ]
 
+    last_role = "system"
+
+    # 1) Netegem i afegim historial, garantint que no hi ha rols consecutius iguals
     if req.history:
         for m in req.history:
             role = m.get("role")
-            content = m.get("content")
-            if role in ("user", "assistant") and content:
-                messages.append({"role": role, "content": content})
+            content = (m.get("content") or "").strip()
+            if role not in ("user", "assistant") or not content:
+                continue
 
-    messages.append({"role": "user", "content": req.message})
+            if role == last_role:
+                # Si hi ha dos del mateix rol seguits, els unim
+                messages[-1]["content"] += "\n" + content
+            else:
+                messages.append({"role": role, "content": content})
+                last_role = role
+
+    # 2) Afegim el missatge actual com a 'user'
+    new_content = (req.message or "").strip()
+    if new_content:
+        if last_role == "user":
+            # Evitem dos 'user' seguits: unim el nou amb l'últim
+            messages[-1]["content"] += "\n" + new_content
+        else:
+            messages.append({"role": "user", "content": new_content})
 
     reply = ask_salamandra(messages)
     return {"reply": reply}

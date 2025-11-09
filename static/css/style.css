@@ -9,6 +9,44 @@
 /* * LA SOLUCIÓN:
  * Esto fuerza al div del mapa a ocupar toda la pantalla.
  */
+
+ .map-legend {
+    position: absolute;
+    bottom: 40px;
+    right: 10px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 11px;
+    line-height: 1.4;
+    z-index: 5;
+    display: none; /* ocult per defecte */
+}
+
+.map-legend h4 {
+    margin: 0 0 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #333;
+}
+
+.map-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 1px 0;
+}
+
+.map-legend-color {
+    width: 18px;
+    height: 4px;
+    border-radius: 4px;
+}
+
 .gradient-text {
     background: linear-gradient(90deg,#e30613, #e306ac); 
     -webkit-background-clip: text;

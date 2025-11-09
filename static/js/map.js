@@ -52,6 +52,39 @@ const l12Checkbox = document.getElementById('l12-checkbox');
 const heatmapSliderContainer = document.getElementById('heatmap-slider-container');
 const heatmapRadiusSlider = document.getElementById('heatmap-radius-slider');
 const heatmapIntensitySlider = document.getElementById('heatmap-intensity-slider');
+const metroLegend = document.getElementById('metro-legend');
+
+// Config de la llegenda de línies (colors coherents amb TMB + L12 vostra)
+const METRO_LINES_CONFIG = [
+    { code: 'L1',  name: 'L1',  color: '#CE1126' },   // vermell
+    { code: 'L2',  name: 'L2',  color: '#93278F' },   // lila
+    { code: 'L3',  name: 'L3',  color: '#009C4F' },   // verd
+    { code: 'L4',  name: 'L4',  color: '#F9E300' },   // groc
+    { code: 'L5',  name: 'L5',  color: '#0066CC' },   // blau
+    { code: 'L9',  name: 'L9',  color: '#F58220' },   // taronja
+    { code: 'L10', name: 'L10', color: '#00A7E1' },   // blau clar
+    { code: 'L11', name: 'L11', color: '#A3C82D' },   // verd clar
+    { code: 'L12', name: 'L12', color: '#48918d' }    // la vostra L12
+];
+
+function buildMetroLegend() {
+    if (!metroLegend) return;
+
+    metroLegend.innerHTML = `
+        <h4>Línies de metro</h4>
+        ${METRO_LINES_CONFIG.map(l => `
+            <div class="map-legend-item">
+                <span class="map-legend-color" style="background:${l.color};"></span>
+                <span>${l.name}</span>
+            </div>
+        `).join('')}
+    `;
+}
+
+function toggleMetroLegend(show) {
+    if (!metroLegend) return;
+    metroLegend.style.display = show ? 'block' : 'none';
+}
 
 
 // ==================================================================
@@ -131,6 +164,7 @@ function initializeMap() {
             'source': 'catastro-wms', 
             'layout': { 'visibility': 'none' }
         });
+        buildMetroLegend();
 
         // --- Capa Edificios 3D (GeoJSON) ---
         map.addSource('barcelona-buildings', {
@@ -386,8 +420,11 @@ buildingsCheckbox.addEventListener('change', (e) => {
 // Listener per a Línies de Metro
 metroLinesCheckbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('metro-lines-layer')) return; 
-    map.setLayoutProperty('metro-lines-layer', 'visibility', e.target.checked ? 'visible' : 'none');
+    const isVisible = e.target.checked;
+    map.setLayoutProperty('metro-lines-layer', 'visibility', isVisible ? 'visible' : 'none');
+    toggleMetroLegend(isVisible);
 });
+
 
 // Listener per a les Parades de Metro
 metroStopsCheckbox.addEventListener('change', (e) => {

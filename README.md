@@ -283,35 +283,9 @@ If a vehicle is parked without a valid registration in a regulated area and Robo
 |---------|----------|
 | <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI"></a> | <a href="https://jinja.palletsprojects.com/en/stable//"><img src="https://img.shields.io/badge/jinja-white.svg?style=for-the-badge&logo=jinja&logoColor=black" alt="Jinja"></a> |
 
-| Database | APIs & External Services |
-|----------|--------------------------|
-| <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"></a> | <a href="https://cloud.google.com/vision"><img src="https://img.shields.io/badge/cloud-vision-4285f4.svg?style=for-the-badge&logo=GoogleCloud&logoColor=ffffff&labelColor=4285f4" alt="CloudVision"></a> <a href="https://cloud.google.com/speech-to-text"><img src="https://img.shields.io/badge/cloud-speech-4285f4.svg?style=for-the-badge&logo=GoogleCloud&logoColor=ffffff&labelColor=4285f4" alt="CloudSpeech"></a> <br> <a href="https://ai.google.dev/?utm_source=website&utm_medium=referral&utm_campaign=geminichat&utm_contentn"><img src="https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white" alt="Google Gemini"></a> <a href="https://github.com/aiortc"><img src="https://img.shields.io/badge/AIORTC-2c5bb4.svg?style=for-the-badge&logo=AIOHTTP&logoColor=ffffff&labelColor=2c5bb4" alt="Aiortc"></a> |
-  
-# License
-This project is licensed under the [MIT License](LICENSE).  
-© 2025–present [Contributors](https://github.com/joanmarc28/Robocat/contributors)
-
-# Contribution
-This project was created as part of a university assignment and is not open to external contributions.
-
-However, feel free to fork the repository and experiment with it for learning and improvement purposes.
-
 # References
-**1** | *Tutorial EasyEDA* ([Link](https://www.youtube.com/watch?v=BvvHJ-H79l8&ab_channel=ELECTRONOOBSenEspa%C3%B1ol)) <br>
-
-**2** | *The LAD Dog V1.0 - Assembly Instructions* ([Link](https://www.youtube.com/watch?v=YNgyFZvyQP4&ab_channel=LADRobotics)) <br>
-
-**3** | *OpenCat by PetoiCamp* ([Link](https://github.com/PetoiCamp/OpenCat)) <br>
-
-**4** | *Boston Dynamics Robot* ([Link](https://www.youtube.com/watch?v=9KdLYhsh0zw&ab_channel=SabinIngenier%C3%ADaCivil)) <br>
-
-**5** | *Beitian BN220 GPS Installation* ([Link](https://www.youtube.com/watch?v=30FU0_7-G3w&ab_channel=Unboxingexperience7)) <br>
-
-**6** | *Sistema de detección de matrículas con OpenCV (Jorge Navacerrada)* ([Link](https://oa.upm.es/51869/1/TFG_JORGE_NAVACERRADA.pdf)) <br>
-
-**7** | *Car License Plate Detection Database* ([Link](https://www.kaggle.com/datasets/andrewmvd/car-plate-detection/data)) <br>
-
-**8** | *Chars74K Database for OCR Training* ([Link](https://www.kaggle.com/datasets/supreethrao/chars74kdigitalenglishfont))
+**1** | *OpenData Barcelona* ([Link](https://opendata-ajuntament.barcelona.cat/)) <br>
+**2** | *OpenData TMB* ([Link](https://www.tmb.cat/ca/tmb-app-i-altres-aplicacions/eines-per-a-desenvolupadors)) <br>
 
 # Credits
 
@@ -338,14 +312,14 @@ However, feel free to fork the repository and experiment with it for learning an
 
 # Gallery
 <p align>
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img1.png" alt="Logo" width="380"> 
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img1.png" alt="Logo" width="400"> 
 <img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img2.png" alt="Logo" width="400">
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img3.png" alt="Logo" width="350">
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img4.png" alt="Logo" width="370">
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img5.png" alt="Logo" width="310">
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img3.png" alt="Logo" width="400">
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img4.png" alt="Logo" width="400">
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img5.png" alt="Logo" width="400">
 <img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img6.png" alt="Logo" width="400">
 <img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img7.png" alt="Logo" width="400">
 <img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img8.png" alt="Logo" width="400">
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img9.png" alt="Logo" width="370">
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img10.png" alt="Logo" width="280">
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img9.png" alt="Logo" width="400">
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img10.png" alt="Logo" width="400">
 </p>

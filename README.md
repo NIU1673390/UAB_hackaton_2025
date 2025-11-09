@@ -38,7 +38,7 @@ Per a fer el mapa s'usa MapLibre, una llibreria opensource de JavaScript. Permet
 D'acord amb les diferents dades analitzades i el mapa resultant, hem decidit ampliar l'L1 en direcció al mar i intersecant amb els plans d’ampliació de l'L2.  Les noves parades es nomenarien amb el nom de les sortides a terra: -Rambla de Sant Juan -Doctor Robert -Passeig Marítim Així es veuria aquesta ampliació:
 
 <p align>
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/linia1.png" alt="Logo" width="800">
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/linea1.png" alt="Logo" width="800">
 </p>
 
 ## 3. Tercer Objectiu
@@ -48,7 +48,7 @@ Aquesta línia es nomenaria L12 i comptaria amb les següents parades:
 
 
 <p align>
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/linia12.png" alt="Logo" width="800">
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/linea12.png" alt="Logo" width="800">
 </p>
 
 

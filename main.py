@@ -26,10 +26,10 @@ def index(request: Request):
     })
 
 
-@app.get("/map")
+@app.get("/ampliacions")
 def map_view(request: Request):
 
-    return templates.TemplateResponse("map.html", {
+    return templates.TemplateResponse("ampliacions.html", {
         "request": request
     }) 
 

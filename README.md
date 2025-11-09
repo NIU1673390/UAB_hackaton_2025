@@ -11,9 +11,9 @@
  <!---Modificar per els nostres casos--->
 <p align="center">
   <a href="#1. Primer Objectiu">1. Primer Objectiu</a> •
-  <a href="#2. Segon Objectiu">1. Segon Objectiu</a> •
-  <a href="#3. Tercer Objectiu">1. Tercer Objectiu</a> •
-  <a href="#4. Quart Objectiu">1. Quart Objectiu</a> •
+  <a href="#2. Segon Objectiu">2. Segon Objectiu</a> •
+  <a href="#3. Tercer Objectiu">3. Tercer Objectiu</a> •
+  <a href="#4. Quart Objectiu">4. Quart Objectiu</a> •
   <a href="#Eines Utilitzades">Eines Utilitzades</a> •
   <a href="#Referencies">Referencies</a> •
   <a href="#Credits">Credits</a> •
@@ -31,24 +31,35 @@ Aquests fitxers .goejson com els pesos para les parades en un mapa  Aquests fitx
 Per a fer el mapa s'usa MapLibre, una llibreria opensource de JavaScript. Permet pujar dades en una interfície molt personalitzable i visualitzar-les fins i tot, en 3D.
 
 <p align>
-<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img9.png" alt="Logo" width="800">
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img5.png" alt="Logo" width="800">
 </p>
 
 ## 2. Segon Objectiu
+D'acord amb les diferents dades analitzades i el mapa resultant, hem decidit ampliar l'L1 en direcció al mar i intersecant amb els plans d’ampliació de l'L2.  Les noves parades es nomenarien amb el nom de les sortides a terra: -Rambla de Sant Juan -Doctor Robert -Passeig Marítim Així es veuria aquesta ampliació:
 
-
-
+<p align>
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/linia1.png" alt="Logo" width="800">
+</p>
 
 ## 3. Tercer Objectiu
+Aplicant la mateixa metodologia per definir quina és la millor línia d'acord amb quina connexió obtindríem, transbords i altres ampliacions ja anunciades per optimitzar l’impacte en el nivell de congestió de persones. Tenint en compte és clar qüestions com el terreny o les necessitats del ciutadà habitual de les diverses zones per les quals passarà.
+
+Aquesta línia es nomenaria L12 i comptaria amb les següents parades:
 
 
-
+<p align>
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/linia12.png" alt="Logo" width="800">
+</p>
 
 
 ## 4. Quart Objectiu
+Com a funció addicional hem incorporat un chatbot de llenguatge. Aquest bot s’ha desenvolupat amb un LLM de l’Aina, al qual ens connectem al model amb 
+l’ajuda de l'API PublicAI servei ubicat a Suiza i, per tant, mentenim nivell europeus de seguretat de dades.
 
 
-
+<p align>
+<img src="https://raw.githubusercontent.com/NIU1673390/UAB_hackaton_2025/main/static/img/img8.png" alt="Logo" width="800">
+</p>
 
 # Eines Utilitzades
 ### Programació

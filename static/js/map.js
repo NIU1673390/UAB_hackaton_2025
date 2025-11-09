@@ -38,17 +38,9 @@ const buildingsCheckbox = document.getElementById('buildings-3d-checkbox');
 const metroLinesCheckbox = document.getElementById('metro-lines-checkbox');
 const metroStopsCheckbox = document.getElementById('metro-stops-checkbox');
 const populationHeatmapCheckbox = document.getElementById('population-heatmap-checkbox');
-
-// ==========================================================
-// LÍNEA RESTAURADA: Referencia para la Demanda de Estaciones
-// ==========================================================
 const stationDemandCheckbox = document.getElementById('station-demand-checkbox');
-
 const ampliacioL1Checkbox = document.getElementById('ampliacio-l1-checkbox');
-
 const l12Checkbox = document.getElementById('l12-checkbox');
-
-const servicesCheckbox = document.getElementById('services-checkbox');
 
 
 // Referencias a los sliders del mapa de calor
@@ -179,7 +171,6 @@ function initializeMap() {
                     'interpolate', ['linear'], ['get', 'poblacion_estimada'],
                     0, 0, 100, 1 
                 ],
-                // Valores iniciales ajustados a tus sliders
                 'heatmap-intensity': 0.4, 
                 'heatmap-radius': 15,
                 'heatmap-color': [
@@ -191,36 +182,24 @@ function initializeMap() {
             }
         });
 
-        // ==========================================================
-        // BLOC RESTAURAT: Capa de Demanda d'Estacions (Persones)
-        // ==========================================================
+        // --- Capa de Demanda d'Estacions (Persones) ---
         map.addSource('station-demand-source', {
             'type': 'geojson',
-            'data': 'static/data/estacions.geojson' // El teu arxiu amb la dada 'PERSONA'
+            'data': 'static/data/estacions.geojson'
         });
         map.addLayer({
             'id': 'station-demand-layer',
             'type': 'circle',
             'source': 'station-demand-source',
-            'layout': {
-                'visibility': 'none' // Amagada per defecte
-            },
+            'layout': { 'visibility': 'none' },
             'paint': {
-                // Radi graduat basat en la propietat 'PERSONA'
                 'circle-radius': [
                     'interpolate', ['linear'], ['get', 'PERSONA'],
-                    1000000, 3,  // 1 milió de persones -> 3px radi
-                    3000000, 6,  // 3 milions -> 6px
-                    5000000, 10, // 5 milions -> 10px
-                    8000000, 15  // 8+ milions -> 15px
+                    1000000, 3, 3000000, 6, 5000000, 10, 8000000, 15
                 ],
-                // Color graduat (groc a vermell) basat en 'PERSONA'
                 'circle-color': [
                     'interpolate', ['linear'], ['get', 'PERSONA'],
-                    1000000, '#ffffcc', // Groc
-                    3000000, '#fd8d3c', // Taronja
-                    5000000, '#e31a1c', // Vermell
-                    8000000, '#800026'  // Vermell fosc
+                    1000000, '#ffffcc', 3000000, '#fd8d3c', 5000000, '#e31a1c', 8000000, '#800026'
                 ],
                 'circle-opacity': 0.8,
                 'circle-stroke-color': 'white',
@@ -228,82 +207,45 @@ function initializeMap() {
             }
         });
 
-        // ==========================================================
-        // NUEVO BLOQUE: Capa de Ampliación L1
-        // ==========================================================
+        // --- Capa de Ampliación L1 ---
         map.addSource('ampliacio-l1-source', {
             'type': 'geojson',
-            'data': 'static/data/ampliacio_l1.geojson' // Asegúrate que este sea el nombre del archivo
+            'data': 'static/data/ampliacio_l1.geojson'
         });
         map.addLayer({
             'id': 'ampliacio-l1-layer',
             'type': 'line',
             'source': 'ampliacio-l1-source',
-            'layout': { 
-                'visibility': 'none' // Desactivada por defecto
-            },
+            'layout': { 'visibility': 'none' },
             'paint': {
-                'line-color': '#CE1126', // Rojo L1
+                'line-color': '#CE1126',
                 'line-width': 5,
-                'line-dasharray': [2, 2] // Línea discontinua
+                'line-dasharray': [2, 2]
             }
         });
 
+        // --- Capa L12 ---
         map.addSource('l12-source', {
             'type': 'geojson',
-            'data': 'static/data/L12.geojson' // Asegúrate que este sea el nombre del archivo
+            'data': 'static/data/L12.geojson'
         });
         map.addLayer({
             'id': 'l12-layer',
             'type': 'line',
             'source': 'l12-source',
-            'layout': { 
-                'visibility': 'none' // Desactivada por defecto
-            },
+            'layout': { 'visibility': 'none' },
             'paint': {
                 'line-color': '#48918dff',
                 'line-width': 5,
-                'line-dasharray': [2, 2] // Línea discontinua
-            }
-        });
-
-        map.addSource('services-source', {
-            'type': 'geojson',
-            'data': 'static/data/serveis.geojson' // Assegura't que el fitxer es digui així
-        });
-        map.addLayer({
-            'id': 'services-layer',
-            'type': 'circle',
-            'source': 'services-source',
-            'layout': { 'visibility': 'none' },
-            'paint': {
-                'circle-radius': 5,
-                'circle-stroke-width': 1,
-                'circle-stroke-color': '#ffffff',
-                // Colors basats en la propietat 'CATEGORIA'
-                'circle-color': [
-                    'match',
-                    ['get', 'CATEGORIA'],
-                    'Aparcaments', '#007bff', // Blau
-                    'Punts d\'ancoratge de bicicletes', '#28a745', // Verd
-                    // Afegeix més categories aquí si cal
-                    // 'Altra Categoria', '#altrecolor',
-                    '#6c757d' // Gris per a qualsevol altra categoria
-                ]
+                'line-dasharray': [2, 2]
             }
         });
 
 
         // --- Ordenar Capes ---
         const layersToMove = [
-            'catastro-layer', 
-            'population-heatmap-layer',
-            'metro-lines-layer',
-            'services-layer',
-            'ampliacio-l1-layer',
-            'l12-layer', 
-            'metro-stops-layer',
-            'station-demand-layer' // Afegim la capa de demanda a la llista
+            'catastro-layer', 'population-heatmap-layer', 'metro-lines-layer', 'ampliacio-l1-layer', 'l12-layer', 
+            'metro-stops-layer', 'station-demand-layer'
         ];
         layersToMove.forEach(layerId => {
             if (map.getLayer(layerId)) {
@@ -311,11 +253,9 @@ function initializeMap() {
             }
         });
 
-        // ==========================================================
-        // NOU BLOC: Interacció del Mapa (Popups i Cursos)
-        // ==========================================================
+        // --- Interacció del Mapa (Popups i Cursos) ---
         
-        // --- Popups per a la Demanda d'Estacions ---
+        // Popups per a la Demanda d'Estacions
         map.on('click', 'station-demand-layer', (e) => {
             if (e.features.length > 0) {
                 const feature = e.features[0];
@@ -323,14 +263,10 @@ function initializeMap() {
                 const stationName = feature.properties.NOM_ESTACIO;
                 const passengerCount = feature.properties.PERSONA;
                 
-                // Assegurem que el popup aparegui correctament
                 while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                 }
-
-                // Formatem el número de persones (p.ex., 7.718.459)
                 const formattedCount = Math.round(passengerCount).toLocaleString('ca-ES');
-                
                 const htmlContent = `
                     <div style="font-family: Arial, sans-serif; font-size: 14px; max-width: 200px;">
                         <strong style="color: #333; font-size: 1.1em;">${stationName}</strong>
@@ -338,22 +274,12 @@ function initializeMap() {
                         Passatgers: <strong style="color: #c00;">${formattedCount}</strong>
                     </div>
                 `;
-
-                new maplibregl.Popup({ closeButton: false, offset: 15 }) // offset de 15px
-                    .setLngLat(coordinates)
-                    .setHTML(htmlContent)
-                    .addTo(map);
+                new maplibregl.Popup({ closeButton: false, offset: 15 })
+                    .setLngLat(coordinates).setHTML(htmlContent).addTo(map);
             }
         });
 
-        // --- Canvi de Cursor (per a la capa de demanda) ---
-        map.on('mouseenter', 'station-demand-layer', () => {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-        map.on('mouseleave', 'station-demand-layer', () => {
-            map.getCanvas().style.cursor = '';
-        });
-    });
+    }); // Fi de map.on('load')
 }
 
 /**
@@ -369,7 +295,7 @@ function setBaseMap(selectedMapId) {
 }
 
 // ==================================================================
-// SECCIÓ 3: EVENT LISTENERS (Controls del mapa)
+// SECCIÓN 3: EVENT LISTENERS (Controls del mapa)
 // ==================================================================
 
 // --- Control del Panell de Capes ---
@@ -377,17 +303,13 @@ layersToggleBtn.addEventListener('click', (e) => {
     e.stopPropagation(); 
     const isVisible = layersPanel.style.display === 'block'; 
     layersPanel.style.display = isVisible ? 'none' : 'block'; 
-    
-    if (!isVisible) { 
-        map.once('click', () => { layersPanel.style.display = 'none'; }); 
-    } 
+    if (!isVisible) { map.once('click', () => { layersPanel.style.display = 'none'; }); } 
 });
 
-layersPanel.addEventListener('click', (e) => { 
-    e.stopPropagation(); 
-});
+layersPanel.addEventListener('click', (e) => { e.stopPropagation(); });
 
 // Listener per a Mapes Base
+// FIX: El teu codi tenia 'name-layer' en lloc de 'name'
 document.querySelectorAll('input[name="base-layer"]').forEach(radio => { 
     radio.addEventListener('change', (e) => { 
         if (e.target.checked) setBaseMap(e.target.value); 
@@ -435,24 +357,23 @@ heatmapIntensitySlider.addEventListener('input', (e) => {
     map.setPaintProperty('population-heatmap-layer', 'heatmap-intensity', parseFloat(e.target.value));
 });
 
-// ==========================================================
-// BLOC RESTAURAT: Listener per a la Demanda d'Estacions
-// ==========================================================
+// --- Listener per a la Demanda d'Estacions ---
 stationDemandCheckbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('station-demand-layer')) return; 
     map.setLayoutProperty('station-demand-layer', 'visibility', e.target.checked ? 'visible' : 'none');
 });
 
+// --- Listener per a la Ampliació L1 ---
 ampliacioL1Checkbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('ampliacio-l1-layer')) return; 
     map.setLayoutProperty('ampliacio-l1-layer', 'visibility', e.target.checked ? 'visible' : 'none');
 });
 
+// --- Listener per a la L12 ---
 l12Checkbox.addEventListener('change', (e) => {
     if (!map || !map.getLayer('l12-layer')) return; 
     map.setLayoutProperty('l12-layer', 'visibility', e.target.checked ? 'visible' : 'none');
 });
-
 
 
 // --- Controls Addicionals del Mapa ---
